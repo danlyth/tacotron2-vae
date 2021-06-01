@@ -12,9 +12,9 @@ class Tacotron2Logger(SummaryWriter):
     def log_training(self, reduced_loss, grad_norm, learning_rate, duration, recon_loss, kl_div, kl_weight,
                      iteration):
             self.add_scalar("training.loss", reduced_loss, iteration)
-            self.add_scalar("grad.norm", grad_norm, iteration)
+            self.add_scalar("grad.norm", grad_norm, iteration) # clipped gradients
             self.add_scalar("learning.rate", learning_rate, iteration)
-            self.add_scalar("duration", duration, iteration)
+            self.add_scalar("duration", duration, iteration) # this is just time taken per iteration
             self.add_scalar("kl_div", kl_div, iteration)
             self.add_scalar("kl_weight", kl_weight, iteration)
             self.add_scalar("recon_loss", recon_loss, iteration)
@@ -23,7 +23,9 @@ class Tacotron2Logger(SummaryWriter):
         self.add_scalar("validation.loss", reduced_loss, iteration)
         _, mel_outputs, gate_outputs, alignments, mus, _, _, emotions = y_pred
         mel_targets, gate_targets = y
-        print(emotions)
+        # print(f'Emotions: {emotions}')
+        # print(f'Alignments: {alignments}')
+        # print(f'Alignments shape: {alignments.shape}')
 
         # plot distribution of parameters
         for tag, value in model.named_parameters():
