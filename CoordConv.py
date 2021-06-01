@@ -1,9 +1,14 @@
 import torch
 import torch.nn as nn
 import torch.nn.modules.conv as conv
-from hparams import create_hparams
+import yaml
+from attrdict import AttrDict
+# from hparams import create_hparams
 
-hparams = create_hparams()
+# hparams = create_hparams()
+
+with open('hparams.yaml') as f:
+    hparams = AttrDict(yaml.load(f, Loader=yaml.Loader))
 
 class AddCoords(nn.Module):
     def __init__(self, rank, with_r=False):
