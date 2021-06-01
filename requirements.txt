@@ -11,6 +11,4 @@ scipy==1.6.3
 tensorboardX==2.2
 Unidecode==1.1.1
 pillow==8.2.0
-nltk==3.4.5
-jamo==0.4.1
 tensorflow
