@@ -26,7 +26,7 @@ def plot_alignment_to_numpy(alignment, info=None):
     fig.canvas.draw()
     data = save_figure_to_numpy(fig)
     plt.close()
-    return data
+    return np.transpose(data,(2,0,1)) #NOTE changed from simply `return data`
 
 
 def plot_spectrogram_to_numpy(spectrogram):
@@ -41,7 +41,7 @@ def plot_spectrogram_to_numpy(spectrogram):
     fig.canvas.draw()
     data = save_figure_to_numpy(fig)
     plt.close()
-    return data
+    return np.transpose(data,(2,0,1)) #NOTE changed from simply `return data`
 
 
 def plot_gate_outputs_to_numpy(gate_targets, gate_outputs):
@@ -58,14 +58,14 @@ def plot_gate_outputs_to_numpy(gate_targets, gate_outputs):
     fig.canvas.draw()
     data = save_figure_to_numpy(fig)
     plt.close()
-    return data
+    return np.transpose(data,(2,0,1)) #NOTE changed from simply `return data`
 
 def plot_scatter(mus, y):
     """
     tensorboardX에서 scatter plot 그릴 수 있음
     """
-    colors = 'r','b','g','y'
-    labels = 'neu','sad','ang','hap'
+    colors = 'r','b','g','y', 'm', 'k'
+    labels = '1','2','3','4', '5', '6'
 
     mus = mus.cpu().numpy()
     y = y.cpu().numpy()
@@ -80,4 +80,4 @@ def plot_scatter(mus, y):
     fig.canvas.draw()
     data = save_figure_to_numpy(fig)
     plt.close()
-    return data
+    return np.transpose(data,(2,0,1)) #NOTE changed from simply `return data`
