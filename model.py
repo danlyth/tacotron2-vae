@@ -514,7 +514,7 @@ class Tacotron2(nn.Module):
 
             outputs[0].data.masked_fill_(mask, 0.0)
             outputs[1].data.masked_fill_(mask, 0.0)
-            outputs[2].data.masked_fill_(mask[:, 0, :], 1e3)  # gate energies
+            outputs[2].data.masked_fill_(mask[:, 0, :] > 0, 1e3)  # gate energies https://stackoverflow.com/questions/53562417/how-to-convert-a-pytorch-tensor-of-ints-to-a-tensor-of-booleans
 
         outputs = fp16_to_fp32(outputs) if self.fp16_run else outputs
         return outputs
@@ -533,6 +533,7 @@ class Tacotron2(nn.Module):
         transcript_outputs_size = list(transcript_outputs.shape)
 
         prosody_outputs, mu, logvar, z = self.vae_gst(targets) # get z 
+        # print(f'Mu from forward pass: {mu}, \nLog var from foward pass: {logvar}')
         prosody_outputs = prosody_outputs.unsqueeze(1).expand_as(transcript_outputs)
         encoder_outputs = transcript_outputs + prosody_outputs # for decoder input
 
