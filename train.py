@@ -3,6 +3,8 @@ import time
 import argparse
 import math
 from numpy import finfo
+import yaml
+from attrdict import AttrDict
 
 import torch
 from distributed import apply_gradient_allreduce
@@ -16,7 +18,7 @@ from model import Tacotron2
 from data_utils import TextMelLoader, TextMelCollate
 from loss_function import Tacotron2Loss_VAE
 from logger import Tacotron2Logger
-from hparams import create_hparams
+# from hparams import create_hparams
 
 
 def batchnorm_to_float(module):
@@ -232,8 +234,8 @@ def train(output_directory, log_directory, checkpoint_path, warm_start, n_gpus,
 
             if not overflow and not math.isnan(reduced_loss) and rank == 0:
                 duration = time.perf_counter() - start
-                print("Train loss {} {:.6f} Grad Norm {:.6f} {:.2f}s/it".format(
-                    iteration, reduced_loss, grad_norm, duration))
+                print("Train loss {} {:.6f} Grad Norm {:.6f} {:.2f}s/it kl {:.3f} kl weight {:.6f}".format(
+                    iteration, reduced_loss, grad_norm, duration, kl, kl_weight))
                 logger.log_training(
                     reduced_loss, grad_norm, learning_rate, duration, recon_loss, kl, kl_weight, iteration)
 
@@ -270,7 +272,10 @@ if __name__ == '__main__':
                         required=False, help='comma separated name=value pairs')
 
     args = parser.parse_args()
-    hparams = create_hparams(args.hparams)
+
+    with open(args.hparams) as f:
+        hparams = AttrDict(yaml.load(f, Loader=yaml.Loader))
+    # hparams = create_hparams(args.hparams)
 
     torch.backends.cudnn.enabled = hparams.cudnn_enabled
     torch.backends.cudnn.benchmark = hparams.cudnn_benchmark
